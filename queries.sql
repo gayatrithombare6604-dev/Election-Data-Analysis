@@ -1,5 +1,5 @@
 -- Election Data Analysis & Visualization - 2019
--- Google BigQuery SQL Queries
+-- Google BigQuery SQL Queries 
 
 -- 1. Retrieve election results with party details
 SELECT
