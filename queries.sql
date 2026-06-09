@@ -1,67 +1,60 @@
--- Election Data Analysis & Visualization - 2019
--- Google BigQuery SQL Queries 
+-- 1. Total Candidates
+SELECT COUNT(DISTINCT candidate) AS total_candidates
+FROM election_results;
 
--- 1. Retrieve election results with party details
-SELECT
-    a.State,
-    a.Candidate_Name,
-    a.Sex,
-    p.Party_Name,
-    a.Votes,
-    a.Margin_Percentage
-FROM
-    `your_project.your_dataset.all_states_ge` AS a
-JOIN
-    `your_project.your_dataset.ge_parties` AS p
-ON
-    a.Party_ID = p.Party_ID
-WHERE
-    a.Year = 2019;
+-- 2. Total Parties
+SELECT COUNT(DISTINCT party) AS total_parties
+FROM election_results;
 
--- 2. Top 10 candidates by votes
-SELECT
-    Candidate_Name,
-    State,
-    Votes
-FROM
-    `your_project.your_dataset.all_states_ge`
-WHERE
-    Year = 2019
-ORDER BY Votes DESC
+-- 3. Top 10 Constituencies by Votes
+SELECT constituency, SUM(votes) AS total_votes
+FROM election_results
+GROUP BY constituency
+ORDER BY total_votes DESC
 LIMIT 10;
 
--- 3. Party-wise total votes
-SELECT
-    p.Party_Name,
-    SUM(a.Votes) AS Total_Votes
-FROM
-    `your_project.your_dataset.all_states_ge` AS a
-JOIN
-    `your_project.your_dataset.ge_parties` AS p
-ON
-    a.Party_ID = p.Party_ID
-WHERE
-    a.Year = 2019
-GROUP BY p.Party_Name
-ORDER BY Total_Votes DESC;
+-- 4. Winning Candidates
+SELECT candidate, party, constituency
+FROM election_results
+WHERE is_winner = 1;
 
--- 4. State-wise average winning margin
-SELECT
-    State,
-    AVG(Margin_Percentage) AS Avg_Margin
-FROM
-    `your_project.your_dataset.all_states_ge`
-WHERE
-    Year = 2019
-GROUP BY State
-ORDER BY Avg_Margin DESC;
+-- 5. Party Wise Candidate Count
+SELECT party, COUNT(candidate) AS candidate_count
+FROM election_results
+GROUP BY party
+ORDER BY candidate_count DESC;
 
--- 5. Male vs Female candidates
-SELECT
-    Sex,
-    COUNT(*) AS Candidate_Count
-FROM
-    `your_project.your_dataset.all_states_ge`
-WHERE
-    Year = 2019
-GROUP BY Sex;
+-- 6. Average Votes by Party
+SELECT party, AVG(votes) AS avg_votes
+FROM election_results
+GROUP BY party
+ORDER BY avg_votes DESC;
+
+-- 7. Constituencies Won by Each Party
+SELECT party, COUNT(*) AS seats_won
+FROM election_results
+WHERE is_winner = 1
+GROUP BY party
+ORDER BY seats_won DESC;
+
+-- 8. Candidate with Lowest Votes
+SELECT candidate, party, votes
+FROM election_results
+ORDER BY votes ASC
+LIMIT 1;
+
+-- 9. Top 5 Parties by Vote Share
+SELECT party,
+       ROUND(SUM(votes) * 100.0 /
+       (SELECT SUM(votes) FROM election_results), 2) AS vote_share
+FROM election_results
+GROUP BY party
+ORDER BY vote_share DESC
+LIMIT 5;
+
+-- 10. State-wise Winning Candidates
+SELECT state, COUNT(*) AS winners
+FROM election_results
+WHERE is_winner = 1
+GROUP BY state
+ORDER BY winners DESC;
