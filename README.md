@@ -113,8 +113,6 @@ The project demonstrates practical data analytics skills including data explorat
 ✔️ Analytical Queries using BigQuery
 
 ---
-### 🌐 [Click Here to View Full Interactive Data Table](https://flat-viewer.com/gayatrithombare6604-dev/Election-Data-Analysis?filename=all_states_ge.csv)
-
 
 ## 🔍 Key Insights
 
